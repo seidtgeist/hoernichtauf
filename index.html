@@ -1,0 +1,82 @@
+<!-- 
+
+Copyright 2022 @seidtgeist
+
+Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+ -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hör Nicht Auf — Don’t stop playing for YouTube live channels</title>
+    <style>
+        html { height: 100%; }
+        body { background: #c4b446; margin: 0; padding: 0; height: 100%; font-size: 26px; }
+        p { margin: 20px; font-family: sans-serif; }
+        a { color: inherit; }
+        #readme {  opacity: 0; position: absolute; }
+        iframe { border: 0; width: 100%; height: 100%; opacity: 0; transition: opacity 250ms linear; position: absolute; }
+    </style>
+</head>
+<body>
+    <div id="readme">
+        <p>
+            No live stream active. Check the <a href="http://instagram.com/hoer.berlin" target="_blank" rel="noopener">schedule</a>.
+        </p>
+        <p>
+            <strong>Hör Nicht Auf</strong> autoplays live sets from <a href="http://youtube.com/hörberlin" target="_blank" rel="noopener">HÖR’s YouTube channel</a> so you Don’t Stop Dancing.
+        </p>
+        <p>
+            Independent project.
+            <a href="https://typeshare.co/seidtgeist/posts/how-to-turn-hourly-youtube-live-streams-into-a-serial-radio-station-so-fans-keep-listening-without-missing-a-beat" target="_blank" rel="noopener">Read more</a>.
+        </p>
+    </div>
+    <!-- HÖR: UCmfF7JZv26UUKyRedViGIlw -->
+    <!-- TEST: UCakgsb0w7QB0VHdnCc-OVEA -->
+    <iframe
+        id="player"
+        src="https://www.youtube.com/embed/live_stream?channel=UCmfF7JZv26UUKyRedViGIlw&autoplay=1&enablejsapi=1&mute=1"
+        allow="autoplay"
+        allowfullscreen
+    >
+    </iframe>
+    <script>
+const reload = () => window.location.reload();
+const reloadSoon = () => setTimeout(reload, 10e3);
+
+function onYouTubePlayerAPIReady() {
+    const noStateChangeTimeout = reloadSoon();
+
+    const player = new YT.Player('player', {
+        events: {
+            onError: () => reloadSoon(),
+
+            onReady: () => {
+                if (player.getVideoUrl().includes('live_stream')) {
+                    document.getElementById('readme').style.opacity = 1;
+                    document.getElementById('player').style.display = 'none';
+                } else {
+                    document.getElementById('player').style.opacity = 1;
+                    clearTimeout(noStateChangeTimeout);
+                }
+            },
+
+            onStateChange: (event) => {
+                if (event.data === YT.PlayerState.ENDED) {
+                    reload();
+                }
+            }
+        }
+    });
+}
+    </script>
+    <script src="https://www.youtube.com/player_api"></script>
+</body>
+</html>
